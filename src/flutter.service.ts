@@ -275,18 +275,26 @@ SizedBox(
        `);
       case 'table':
         const table = style.table || { header: [], data: [] };
-        const headers = table.header.map((col: any) => `
+        const headers = table.header
+          .map(
+            (col: any) => `
           DataColumn(
             label: Text('${col.title || 'Column'}'),
-          )`).join(',\n            ');
-        const rows = table.data.map((row: any) => `
+          )`,
+          )
+          .join(',\n            ');
+        const rows = table.data
+          .map(
+            (row: any) => `
           DataRow(
             cells: [
               DataCell(Text('${row.columan1 || ''}')),
               DataCell(Text('${row.columan2 || ''}')),
               DataCell(Text('${row.columan3 || ''}')),
             ],
-          )`).join(',\n            ');
+          )`,
+          )
+          .join(',\n            ');
         return positionWrapper(`
 SizedBox(
   width: 280 * scaleFactor, // Adjust width based on content
@@ -308,10 +316,16 @@ SizedBox(
 )
         `);
       case 'card':
-        const card = style.card || { title: 'Title', image: '', description: 'Description', price: 0 };
-        const imageWidget = card.image && card.image.trim() !== ''
-          ? `Image.network('${card.image}', fit: BoxFit.cover, height: 80 * scaleFactor, width: double.infinity, errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300], height: 80 * scaleFactor),)`
-          : `Container(color: Colors.grey[300], height: 80 * scaleFactor)`;
+        const card = style.card || {
+          title: 'Title',
+          image: '',
+          description: 'Description',
+          price: 0,
+        };
+        const imageWidget =
+          card.image && card.image.trim() !== ''
+            ? `Image.network('${card.image}', fit: BoxFit.cover, height: 80 * scaleFactor, width: double.infinity, errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300], height: 80 * scaleFactor),)`
+            : `Container(color: Colors.grey[300], height: 80 * scaleFactor)`;
         return positionWrapper(`
 SizedBox(
   width: 120 * scaleFactor,
@@ -349,6 +363,37 @@ SizedBox(
         ),
       ],
     ),
+  ),
+)
+        `);
+      case 'image':
+        const imageUrl =
+          style.image && style.image.trim() !== ''
+            ? style.image
+            : 'https://via.placeholder.com/150'; // Fallback placeholder URL
+        return positionWrapper(`
+ClipRRect(
+  borderRadius: BorderRadius.circular(${style.borderRadius || 0} * scaleFactor),
+  child: Image.network(
+    '${imageUrl}',
+    width: ${style.width || 50} * scaleFactor,
+    height: ${style.height || 50} * scaleFactor,
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      width: ${style.width || 50} * scaleFactor,
+      height: ${style.height || 50} * scaleFactor,
+      color: Colors.grey[300],
+    ),
+  ),
+)
+        `);
+      case 'label':
+        return positionWrapper(`
+Text(
+  '${style.label || 'Label'}',
+  style: TextStyle(
+    fontSize: ${style.fontSize || 16} * scaleFactor,
+    color: const Color(0xFF${style.colorFont?.substring(1) || '000000'}),
   ),
 )
         `);
