@@ -126,10 +126,12 @@ class _${className}ScreenState extends State<${className}Screen> {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
-      body: Stack(
-        children: [
-          ${componentsCode}
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ${componentsCode}
+          ],
+        ),
       ),
     );
   }
@@ -144,10 +146,12 @@ class ${className}Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
-      body: Stack(
-        children: [
-          ${componentsCode}
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ${componentsCode}
+          ],
+        ),
       ),
     );
   }
@@ -171,7 +175,7 @@ class ${className}Screen extends StatelessWidget {
       case 'button':
         const onPressed = style.navigateTo
           ? `() => Navigator.pushNamed(context, '/${style.navigateTo}')`
-          : 'null';
+          : '(){}';
         return positionWrapper(`
 SizedBox(
   width: ${style.width || 128} * scaleFactor,
@@ -243,6 +247,98 @@ StatefulBuilder(
       case 'iconMenuDeep':
         return positionWrapper(
           `Icon(Icons.menu, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconMenuDots':
+        return positionWrapper(
+          `Icon(Icons.menu, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconHeart':
+        return positionWrapper(
+          `Icon(Icons.favorite_outline, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconMessage':
+        return positionWrapper(
+          `Icon(Icons.message, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconHeadphones':
+        return positionWrapper(
+          `Icon(Icons.headphones, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconLogin':
+        return positionWrapper(
+          `Icon(Icons.login, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconLogout':
+        return positionWrapper(
+          `Icon(Icons.logout, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconAdd':
+        return positionWrapper(
+          `Icon(Icons.add, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconTag':
+        return positionWrapper(
+          `Icon(Icons.label, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconShare':
+        return positionWrapper(
+          `Icon(Icons.share, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconDotsHorizontal':
+        return positionWrapper(
+          `Icon(Icons.more_horiz, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconPlane':
+        return positionWrapper(
+          `Icon(Icons.send, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconImage':
+        return positionWrapper(
+          `Icon(Icons.image, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconText':
+        return positionWrapper(
+          `Icon(Icons.text_fields, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconEmoji':
+        return positionWrapper(
+          `Icon(Icons.emoji_emotions, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconMicrophone':
+        return positionWrapper(
+          `Icon(Icons.mic, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconArrowUp':
+        return positionWrapper(
+          `Icon(Icons.arrow_upward, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconArrowDown':
+        return positionWrapper(
+          `Icon(Icons.arrow_downward, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconArrowLeft':
+        return positionWrapper(
+          `Icon(Icons.arrow_back, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconArrowRight':
+        return positionWrapper(
+          `Icon(Icons.arrow_forward, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconArrowUpDown':
+        return positionWrapper(
+          `Icon(Icons.keyboard_double_arrow_up, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconTrash':
+        return positionWrapper(
+          `Icon(Icons.delete, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconPencil':
+        return positionWrapper(
+          `Icon(Icons.edit, size: 32 * scaleFactor, color: Colors.grey[800])`,
+        );
+      case 'iconX':
+        return positionWrapper(
+          `Icon(Icons.cancel, size: 32 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'container':
         return positionWrapper(`
@@ -328,8 +424,8 @@ SizedBox(
             : `Container(color: Colors.grey[300], height: 80 * scaleFactor)`;
         return positionWrapper(`
 SizedBox(
-  width: 120 * scaleFactor,
-  height: 200 * scaleFactor,
+  width: 130 * scaleFactor,
+  height: 170 * scaleFactor,
   child: Card(
     elevation: 4,
     shape: RoundedRectangleBorder(
@@ -338,25 +434,24 @@ SizedBox(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ${imageWidget},
         Padding(
           padding: EdgeInsets.all(8 * scaleFactor),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${card.title || 'Card Title'}',
-                style: TextStyle(fontSize: 16 * scaleFactor, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4 * scaleFactor),
-              Text(
-                '${card.description || 'Card Description'}',
-                style: TextStyle(fontSize: 14 * scaleFactor, color: Colors.grey[600]),
-              ),
+              ${imageWidget},
               SizedBox(height: 8 * scaleFactor),
               Text(
+                '${card.title || 'Card Title'}',
+                style: TextStyle(fontSize: 14 * scaleFactor, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '${card.description || 'Card Description'}',
+                style: TextStyle(fontSize: 12 * scaleFactor, color: Colors.grey[600]),
+              ),
+              Text(
                 '${card.price || 0}',
-                style: TextStyle(fontSize: 16 * scaleFactor, color: Colors.green),
+                style: TextStyle(fontSize: 12 * scaleFactor, color: Colors.green),
               ),
             ],
           ),
