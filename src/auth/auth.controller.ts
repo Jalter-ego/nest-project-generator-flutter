@@ -1,6 +1,15 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInDto } from './signInDto';
+import { SignInDto, SignInGoogle } from './signInDto';
 
 @Controller('auth')
 export class AuthController {
@@ -8,8 +17,14 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: SignInDto){
-    return this.authService.signIn(signInDto)
+  signIn(@Body() signInDto: SignInDto) {
+    console.log(signInDto);
+    
+    return this.authService.signIn(signInDto);
   }
 
+  @Post('google')
+  googleLogin(@Body() signIn: SignInGoogle) {
+    return this.authService.googleLogin(signIn);
+  }
 }
