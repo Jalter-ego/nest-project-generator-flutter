@@ -1,26 +1,162 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFigmaDto } from './dto/create-figma.dto';
 import { UpdateFigmaDto } from './dto/update-figma.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FigmaService {
-  create(createFigmaDto: CreateFigmaDto) {
-    return 'This action adds a new figma';
+  constructor(private prismaService: PrismaService) {}
+
+  async create(createFigmaDto: CreateFigmaDto) {
+    return this.prismaService.project.create({
+      data: {
+        name: createFigmaDto.name,
+        userId: createFigmaDto.userId,
+        screens: createFigmaDto.screens
+          ? {
+              create: createFigmaDto.screens.map((screen) => ({
+                id: screen.id,
+                name: screen.name,
+                components: {
+                  create: screen.components.map((component) => ({
+                    id: component.id,
+                    type: component.type,
+                    x: component.x,
+                    y: component.y,
+                    properties: component.properties || {},
+                  })),
+                },
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        screens: {
+          include: {
+            components: true,
+          },
+        },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all figma`;
+  async findAll() {
+    return this.prismaService.project.findMany({
+      include: {
+        screens: {
+          include: {
+            components: true,
+          },
+        },
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} figma`;
+  async findAllByUser(id: string) {
+    return this.prismaService.project.findMany({
+      where: {
+        userId: id,
+      },
+      include: {
+        screens: {
+          include: {
+            components: true,
+          },
+        },
+      },
+    });
   }
 
-  update(id: number, updateFigmaDto: UpdateFigmaDto) {
-    return `This action updates a #${id} figma`;
+  async findOne(id: string) {
+    const project = await this.prismaService.project.findUnique({
+      where: { id },
+      include: {
+        screens: {
+          include: {
+            components: true,
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    return project;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} figma`;
+  async update(id: string, updateFigmaDto: UpdateFigmaDto) {
+    console.log(updateFigmaDto);
+    
+    const existingProject = await this.prismaService.project.findUnique({
+      where: { id },
+    });
+
+    if (!existingProject) {
+      throw new Error('Project not found or not authorized');
+    }
+
+    // Eliminar componentes (por si acaso)
+    await this.prismaService.component.deleteMany({
+      where: {
+        screen: {
+          projectId: id,
+        },
+      },
+    });
+
+    // Eliminar pantallas
+    await this.prismaService.screen.deleteMany({
+      where: {
+        projectId: id,
+      },
+    });
+
+    // Actualizar el proyecto con las nuevas pantallas y componentes
+    return this.prismaService.project.update({
+      where: { id },
+      data: {
+        name: updateFigmaDto.name,
+        screens: updateFigmaDto.screens
+          ? {
+              create: updateFigmaDto.screens.map((screen) => ({
+                name: screen.name,
+                components: {
+                  create: screen.components.map((component) => ({
+                    type: component.type,
+                    x: component.x,
+                    y: component.y,
+                    properties: component.properties || {},
+                  })),
+                },
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        screens: {
+          include: {
+            components: true,
+          },
+        },
+      },
+    });
+  }
+
+  async remove(id: string) {
+    const existingProject = await this.prismaService.project.findUnique({
+      where: { id },
+    });
+
+    if (!existingProject) {
+      throw new Error('Project not found or not authorized');
+    }
+
+    await this.prismaService.project.delete({
+      where: { id },
+    });
+
+    return { message: 'Project deleted successfully' };
   }
 }
