@@ -27,8 +27,7 @@ export class AppController {
 
       // Generar main.dart
       const mainDartContent = this.flutterGeneratorService.generateMainDart(data);
-
-      // Ruta del template (ajusta según tu estructura real)
+      
       const templatePath = path.join(process.cwd(), 'src', 'demo_parcial');
       if (!fs.existsSync(templatePath)) {
         throw new Error(`La plantilla no existe en: ${templatePath}`);
@@ -60,7 +59,7 @@ export class AppController {
       res.send(zipBuffer);
 
     } catch (error) {
-      console.error('Error en generateFlutterProject:', error);  // Log detallado
+      console.error('Error en generateFlutterProject:', error); 
       res.status(500).json({ 
         error: 'Error al generar el proyecto',
         details: error.message 
