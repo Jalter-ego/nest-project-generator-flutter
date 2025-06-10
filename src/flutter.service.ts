@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { retry } from 'rxjs';
 import { cardList } from './lib/cardList';
 import { IconNavegable, libraryIcons } from './lib/icons';
 import { togglebuttons } from './lib/togglebuttons';
