@@ -60,3 +60,11 @@ export const libraryIcons = (icon) => {
       return `Icon(Icons.error, size: 32 * scaleFactor, color: Colors.red)`; // Fallback icon
   }
 };
+
+export const IconNavegable = (icon:string,onPressed:any) =>
+`
+GestureDetector(
+                onTap: ${onPressed},
+                child: ${libraryIcons(icon)}
+              ),
+`
