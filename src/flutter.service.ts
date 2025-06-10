@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { retry } from 'rxjs';
+import { cardList } from './lib/cardList';
+import { libraryIcons } from './lib/icons';
+import { togglebuttons } from './lib/togglebuttons';
+import { badge } from './lib/badge';
 
 @Injectable()
 export class FlutterGeneratorService {
@@ -109,7 +114,9 @@ ${screensCode}
       .join(',\n          ');
 
     const hasStatefulComponents = screen.components.some((comp: any) =>
-      ['checkbox'].includes(comp.type),
+      ['checkbox', 'switch', 'radio', 'timepicker', 'slider', 'listtilelist',
+        'togglebuttons'
+      ].includes(comp.type),
     );
 
     if (hasStatefulComponents) {
@@ -170,6 +177,8 @@ class ${className}Screen extends StatelessWidget {
         top: ${y} * scaleFactor,
         child: ${child}
       )`;
+
+    
 
     switch (type) {
       case 'button':
@@ -234,7 +243,7 @@ StatefulBuilder(
         `);
       case 'iconUser':
         return positionWrapper(
-          `Icon(Icons.person, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          libraryIcons('iconUser'),
         );
       case 'iconSearch':
         return positionWrapper(
@@ -492,8 +501,201 @@ Text(
   ),
 )
         `);
+case 'switch':
+        return positionWrapper(`
+StatefulBuilder(
+  builder: (context, setSwitchState) {
+    bool isChecked = ${style.checked ?? false};
+    return Switch(
+      value: isChecked,
+      onChanged: (val) {
+        setSwitchState(() {
+          isChecked = val;
+        });
+      },
+      activeColor: Colors.blue,
+    );
+  },
+)
+        `);
+      case 'radio':
+        return positionWrapper(`
+StatefulBuilder(
+  builder: (context, setRadioState) {
+    bool isChecked = ${style.checked ?? false};
+    return Radio(
+      value: true,
+      groupValue: isChecked,
+      onChanged: (val) {
+        setRadioState(() {
+          isChecked = val as bool;
+        });
+      },
+    );
+  },
+)
+        `);
+      case 'timepicker':
+        return positionWrapper(`
+StatefulBuilder(
+  builder: (context, setTimeState) {
+    // Use a local variable to persist the selected time across rebuilds
+    var selectedTime = TimeOfDay.now();
+    return StatefulBuilder(
+      builder: (context, setInnerState) {
+        return TextButton(
+          onPressed: () async {
+            final TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: selectedTime,
+            );
+            if (picked != null && picked != selectedTime) {
+              setInnerState(() {
+                selectedTime = picked;
+              });
+            }
+          },
+          child: Builder(
+            builder: (context) {
+              return Text(
+                '\${selectedTime.format(context)}',
+                style: TextStyle(fontSize: 16 * scaleFactor),
+              );
+            },
+          ),
+        );
+      },
+    );
+  },
+)
+        `);
+      case 'chip':
+  const chipBg = style.bg ? `const Color(0xFF${style.bg.substring(1)})` : 'Colors.grey[300]';
+  const iconText = style.icon ? style.icon.substring(0, 2).toUpperCase() : 'AB';
+
+  return positionWrapper(`
+Chip(
+  avatar: CircleAvatar(
+    backgroundColor: ${chipBg},
+    child: Container(
+      padding: EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        '${iconText}',
+        style: TextStyle(color: Colors.white, fontSize: 12),
+      ),
+    ),
+  ),
+  label: Text(
+    '${style.label || 'Label'}',
+    style: TextStyle(color: Colors.white),
+  ),
+  backgroundColor: ${chipBg},
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(16 * scaleFactor),
+  ),
+)
+  `);
+
+      case 'circleavatar':
+        const radius = (style.size || 50) / 2; 
+        return positionWrapper(`
+ClipRRect(
+  borderRadius: BorderRadius.circular(${radius} * scaleFactor),
+  child: Image.network(
+    '${style.image || 'https://via.placeholder.com/150'}',
+    width: ${style.size || 50} * scaleFactor,
+    height: ${style.size || 50} * scaleFactor,
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      width: ${style.size || 50} * scaleFactor,
+      height: ${style.size || 50} * scaleFactor,
+      color: Colors.grey[300],
+    ),
+  ),
+)
+        `);
+        case 'slider':
+        const maxValue = style.max
+        const minValue = style.min
+        const value = style.value
+        return positionWrapper(`
+StatefulBuilder(
+                builder: (context, setSliderState) {
+                  double sliderValue = ${value};
+                  final double minValue = ${minValue};
+                  final double maxValue = ${maxValue};
+                  final int numberOfMarkers =
+                      5; // Puedes ajustar cuántos marcadores quieres
+
+                  List<double> markers =
+                      List.generate(numberOfMarkers, (index) {
+                    return minValue +
+                        (maxValue - minValue) * index / (numberOfMarkers - 1);
+                  });
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: Slider(
+                          value: sliderValue,
+                          min: minValue,
+                          max: maxValue,
+                          divisions: (maxValue - minValue).toInt(),
+                          label: sliderValue.toStringAsFixed(1),
+                          onChanged: (value) {
+                            setSliderState(() {
+                              sliderValue = value;
+                            });
+                          },
+                          activeColor: const Color(0xFF${style.color?.substring(1) || '000000'}),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: markers.map((value) {
+                            return Text(
+                              value.toStringAsFixed(
+                                  value.truncateToDouble() == value ? 0 : 1),
+                              style: TextStyle(fontSize: 12),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+          `);
+        case 'listtilelist':
+          return positionWrapper(`
+Column(
+  children: [
+    ${(style.list || []).map((item: any, index: number) => `
+      ${cardList(item, index)}
+    `).join('\n    ')}
+  ]
+)
+            `);
+        case 'togglebuttons':
+          return positionWrapper(`
+            ${togglebuttons(style)}
+          `);
+        case 'badge':
+          return positionWrapper(`
+            ${badge(style)}
+          `)
+
       default:
         return `// Unsupported component type: ${type}`;
     }
   }
+  
 }
