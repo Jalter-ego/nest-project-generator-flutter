@@ -3,7 +3,7 @@ export const libraryIcons = (icon) => {
     icon.toLowerCase() 
   ) {
     case 'iconuser':
-      return `Icon(Icons.person, size: 32 * scaleFactor, color: Colors.grey[800])`;
+      return `Icon(Icons.person_outlined, size: 32 * scaleFactor, color: Colors.grey[800])`;
     case 'iconsearch':
       return `Icon(Icons.search, size: 32 * scaleFactor, color: Colors.grey[800])`;
     case 'iconlock':
@@ -56,6 +56,12 @@ export const libraryIcons = (icon) => {
       return `Icon(Icons.edit, size: 32 * scaleFactor, color: Colors.grey[800])`;
     case 'iconx':
       return `Icon(Icons.cancel, size: 32 * scaleFactor, color: Colors.grey[800])`;
+    case 'icontimepicker':
+      return `Icon(Icons.timer_sharp, size: 32 * scaleFactor, color: Colors.grey[800])`;
+    case 'icontable':
+      return `Icon(Icons.auto_awesome_mosaic_outlined, size: 32 * scaleFactor, color: Colors.grey[800])`;
+    case 'iconhome':
+      return `Icon(Icons.home_outlined, size: 32 * scaleFactor, color: Colors.grey[800])`;
     default:
       return `Icon(Icons.error, size: 32 * scaleFactor, color: Colors.red)`; // Fallback icon
   }

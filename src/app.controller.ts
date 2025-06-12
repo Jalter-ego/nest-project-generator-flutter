@@ -18,9 +18,16 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Post('flutterprueba')
+  flutterPrueba(@Body() data:any[]){
+    return this.flutterGeneratorService.generateMainDart(data)
+  }
+
   @Post('flutter')
   async generateFlutterProject(@Body() data: any[], @Res() res: Response) {
     try {
+      console.log(data);
+      
       if (!data || data.length === 0) {
         return res.status(400).json({ error: 'Diseño vacío o inválido' });
       }

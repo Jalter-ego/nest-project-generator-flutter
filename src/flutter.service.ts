@@ -5,6 +5,7 @@ import { cardList } from './lib/cardList';
 import { IconNavegable, libraryIcons } from './lib/icons';
 import { togglebuttons } from './lib/togglebuttons';
 import { badge } from './lib/badge';
+import { mapSidebarDrawer } from './lib/sidebar';
 
 @Injectable()
 export class FlutterGeneratorService {
@@ -125,6 +126,10 @@ ${screensCode}
       ].includes(comp.type),
     );
 
+    const sidebarComp = screen.components.find((comp: any) => comp.type === 'sidebar');
+    const sidebarDrawer = sidebarComp ? mapSidebarDrawer(sidebarComp) : '';
+
+
     if (hasStatefulComponents) {
       return `
 class ${className}Screen extends StatefulWidget {
@@ -139,6 +144,7 @@ class _${className}ScreenState extends State<${className}Screen> {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
+      ${sidebarDrawer ? `drawer: ${sidebarDrawer},` : ''}
       body: SafeArea(
         child: Stack(
           children: [
@@ -159,6 +165,7 @@ class ${className}Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
+      ${sidebarDrawer ? `drawer: ${sidebarDrawer},` : ''}
       body: SafeArea(
         child: Stack(
           children: [
@@ -693,7 +700,17 @@ ComboboxWidget(
   scaleFactor: scaleFactor,
 )
       `);
-
+      case 'sidebar':
+      return positionWrapper(`
+Builder(
+    builder: (context) => IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: () {
+        Scaffold.of(context).openDrawer();
+      },
+    ),
+  ),
+        `)
       default:
         return `// Unsupported component type: ${type}`;
     }
