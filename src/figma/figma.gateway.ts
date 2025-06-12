@@ -1,8 +1,8 @@
 import {
-  SubscribeMessage,
-  WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
@@ -15,6 +15,8 @@ import { Server, Socket } from 'socket.io';
 export class FigmaGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+
+  // Estado actual del canvas por roomId
   private canvasStates: Record<string, any> = {};
 
   handleConnection(client: Socket) {
@@ -30,7 +32,7 @@ export class FigmaGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.join(roomId);
     console.log(`Client ${client.id} joined room ${roomId}`);
 
-    // Enviar estado actual del canvas al cliente nuevo
+    // Enviar el estado actual del canvas si existe
     const currentState = this.canvasStates[roomId];
     if (currentState) {
       client.emit('canvas-updated', currentState);
@@ -40,6 +42,11 @@ export class FigmaGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('update-canvas')
   handleUpdateCanvas(client: Socket, payload: { roomId: string; data: any }) {
     const { roomId, data } = payload;
-    console.log(data)
+
+    // Guardar nuevo estado
+    this.canvasStates[roomId] = data;
+
+    // Enviar actualización a los demás clientes en la sala
+    client.to(roomId).emit('canvas-updated', data);
   }
 }
