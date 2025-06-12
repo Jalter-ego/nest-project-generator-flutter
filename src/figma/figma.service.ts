@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFigmaDto } from './dto/create-figma.dto';
 import { UpdateFigmaDto } from './dto/update-figma.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FigmaService {
@@ -12,6 +12,7 @@ export class FigmaService {
       data: {
         name: createFigmaDto.name,
         userId: createFigmaDto.userId,
+        editKey: crypto.randomUUID(),
         screens: createFigmaDto.screens
           ? {
               create: createFigmaDto.screens.map((screen) => ({
