@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { retry } from 'rxjs';
 import { cardList } from './lib/cardList';
-import { libraryIcons } from './lib/icons';
+import { IconNavegable, libraryIcons } from './lib/icons';
 import { togglebuttons } from './lib/togglebuttons';
 import { badge } from './lib/badge';
+import { mapSidebarDrawer } from './lib/sidebar';
 
 @Injectable()
 export class FlutterGeneratorService {
@@ -67,6 +67,7 @@ flutter:
 
     return `
 import 'package:flutter/material.dart';
+import 'package:demo_parcial/combobox.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 void main() {
@@ -114,10 +115,20 @@ ${screensCode}
       .join(',\n          ');
 
     const hasStatefulComponents = screen.components.some((comp: any) =>
-      ['checkbox', 'switch', 'radio', 'timepicker', 'slider', 'listtilelist',
-        'togglebuttons'
+      [
+        'checkbox',
+        'switch',
+        'radio',
+        'timepicker',
+        'slider',
+        'listtilelist',
+        'togglebuttons',
       ].includes(comp.type),
     );
+
+    const sidebarComp = screen.components.find((comp: any) => comp.type === 'sidebar');
+    const sidebarDrawer = sidebarComp ? mapSidebarDrawer(sidebarComp) : '';
+
 
     if (hasStatefulComponents) {
       return `
@@ -133,6 +144,7 @@ class _${className}ScreenState extends State<${className}Screen> {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
+      ${sidebarDrawer ? `drawer: ${sidebarDrawer},` : ''}
       body: SafeArea(
         child: Stack(
           children: [
@@ -153,6 +165,7 @@ class ${className}Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).size.width / ${this.DESIGN_WIDTH};
     return Scaffold(
+      ${sidebarDrawer ? `drawer: ${sidebarDrawer},` : ''}
       body: SafeArea(
         child: Stack(
           children: [
@@ -170,6 +183,9 @@ class ${className}Screen extends StatelessWidget {
   mapComponent(comp: any): string {
     const { x, y, properties, type } = comp;
     const style = properties || {};
+    const onPressed = style.navigateTo
+      ? `() => Navigator.pushNamed(context, '/${style.navigateTo}')`
+      : '(){}';
 
     const positionWrapper = (child: string) =>
       `Positioned(
@@ -178,13 +194,8 @@ class ${className}Screen extends StatelessWidget {
         child: ${child}
       )`;
 
-    
-
     switch (type) {
       case 'button':
-        const onPressed = style.navigateTo
-          ? `() => Navigator.pushNamed(context, '/${style.navigateTo}')`
-          : '(){}';
         return positionWrapper(`
 SizedBox(
   width: ${style.width || 128} * scaleFactor,
@@ -242,45 +253,29 @@ StatefulBuilder(
 )
         `);
       case 'iconUser':
-        return positionWrapper(
-          libraryIcons('iconUser'),
-        );
+        return positionWrapper(IconNavegable('iconUser', onPressed));
       case 'iconSearch':
-        return positionWrapper(
-          `Icon(Icons.search, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconSearch', onPressed));
       case 'iconLock':
         return positionWrapper(
           `Icon(Icons.lock, size: 32 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconMenuDeep':
-        return positionWrapper(
-          `Icon(Icons.menu, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconMenuDeep', onPressed));
       case 'iconMenuDots':
-        return positionWrapper(
-          `Icon(Icons.menu, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconMenuDots', onPressed));
       case 'iconHeart':
         return positionWrapper(
           `Icon(Icons.favorite_outline, size: 32 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconMessage':
-        return positionWrapper(
-          `Icon(Icons.message, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconMessage', onPressed));
       case 'iconHeadphones':
-        return positionWrapper(
-          `Icon(Icons.headphones, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconHeadphones', onPressed));
       case 'iconLogin':
-        return positionWrapper(
-          `Icon(Icons.login, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconLogin', onPressed));
       case 'iconLogout':
-        return positionWrapper(
-          `Icon(Icons.logout, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconLogout', onPressed));
       case 'iconAdd':
         return positionWrapper(
           `Icon(Icons.add, size: 32 * scaleFactor, color: Colors.grey[800])`,
@@ -318,25 +313,15 @@ StatefulBuilder(
           `Icon(Icons.mic, size: 32 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconArrowUp':
-        return positionWrapper(
-          `Icon(Icons.arrow_upward, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconArrowUp', onPressed));
       case 'iconArrowDown':
-        return positionWrapper(
-          `Icon(Icons.arrow_downward, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconArrowDown', onPressed));
       case 'iconArrowLeft':
-        return positionWrapper(
-          `Icon(Icons.arrow_back, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconArrowLeft', onPressed));
       case 'iconArrowRight':
-        return positionWrapper(
-          `Icon(Icons.arrow_forward, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconArrowRight', onPressed));
       case 'iconArrowUpDown':
-        return positionWrapper(
-          `Icon(Icons.keyboard_double_arrow_up, size: 32 * scaleFactor, color: Colors.grey[800])`,
-        );
+        return positionWrapper(IconNavegable('iconArrowUpDown', onPressed));
       case 'iconTrash':
         return positionWrapper(
           `Icon(Icons.delete, size: 32 * scaleFactor, color: Colors.grey[800])`,
@@ -501,7 +486,7 @@ Text(
   ),
 )
         `);
-case 'switch':
+      case 'switch':
         return positionWrapper(`
 StatefulBuilder(
   builder: (context, setSwitchState) {
@@ -570,10 +555,14 @@ StatefulBuilder(
 )
         `);
       case 'chip':
-  const chipBg = style.bg ? `const Color(0xFF${style.bg.substring(1)})` : 'Colors.grey[300]';
-  const iconText = style.icon ? style.icon.substring(0, 2).toUpperCase() : 'AB';
+        const chipBg = style.bg
+          ? `const Color(0xFF${style.bg.substring(1)})`
+          : 'Colors.grey[300]';
+        const iconText = style.icon
+          ? style.icon.substring(0, 2).toUpperCase()
+          : 'AB';
 
-  return positionWrapper(`
+        return positionWrapper(`
 Chip(
   avatar: CircleAvatar(
     backgroundColor: ${chipBg},
@@ -601,7 +590,7 @@ Chip(
   `);
 
       case 'circleavatar':
-        const radius = (style.size || 50) / 2; 
+        const radius = (style.size || 50) / 2;
         return positionWrapper(`
 ClipRRect(
   borderRadius: BorderRadius.circular(${radius} * scaleFactor),
@@ -618,10 +607,10 @@ ClipRRect(
   ),
 )
         `);
-        case 'slider':
-        const maxValue = style.max
-        const minValue = style.min
-        const value = style.value
+      case 'slider':
+        const maxValue = style.max;
+        const minValue = style.min;
+        const value = style.value;
         return positionWrapper(`
 StatefulBuilder(
                 builder: (context, setSliderState) {
@@ -674,28 +663,56 @@ StatefulBuilder(
                 },
               ),
           `);
-        case 'listtilelist':
-          return positionWrapper(`
+      case 'listtilelist':
+        return positionWrapper(`
 Column(
   children: [
-    ${(style.list || []).map((item: any, index: number) => `
+    ${(style.list || [])
+      .map(
+        (item: any, index: number) => `
       ${cardList(item, index)}
-    `).join('\n    ')}
+    `,
+      )
+      .join('\n    ')}
   ]
 )
             `);
-        case 'togglebuttons':
-          return positionWrapper(`
+      case 'togglebuttons':
+        return positionWrapper(`
             ${togglebuttons(style)}
           `);
-        case 'badge':
-          return positionWrapper(`
+      case 'badge':
+        return positionWrapper(`
             ${badge(style)}
-          `)
-
+          `);
+      case 'combobox':
+        const comboboxItems =
+          style.combobox && Array.isArray(style.combobox)
+            ? style.combobox
+                .map(
+                  (item: any) => `ComboboxItem(label: "${item.label || ''}")`,
+                )
+                .join(',\n                ')
+            : '[]';
+        return positionWrapper(`
+ComboboxWidget(
+  combobox: [${comboboxItems}],
+  scaleFactor: scaleFactor,
+)
+      `);
+      case 'sidebar':
+      return positionWrapper(`
+Builder(
+    builder: (context) => IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: () {
+        Scaffold.of(context).openDrawer();
+      },
+    ),
+  ),
+        `)
       default:
         return `// Unsupported component type: ${type}`;
     }
   }
-  
 }
