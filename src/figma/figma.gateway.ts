@@ -28,13 +28,14 @@ export class FigmaGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-room')
-  handleJoinRoom(client: Socket, roomId: string) {
+  handleJoinRoom(client: Socket, payload: { roomId: string }) {
+    const { roomId } = payload;
     client.join(roomId);
-    console.log(`Client ${client.id} joined room ${roomId}`);
+    console.log(`🚪 Cliente ${client.id} se unió a la sala ${roomId}`);
 
-    // Enviar el estado actual del canvas si existe
     const currentState = this.canvasStates[roomId];
     if (currentState) {
+      console.log(`📤 Enviando estado actual del canvas a ${client.id}`);
       client.emit('canvas-updated', currentState);
     }
   }
@@ -44,9 +45,12 @@ export class FigmaGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const { roomId, data } = payload;
 
     // Guardar nuevo estado
+    console.log(`📩 Recibido update-canvas de ${client.id} en sala ${roomId}`, data);
     this.canvasStates[roomId] = data;
 
     // Enviar actualización a los demás clientes en la sala
+
+    console.log(`📡 Enviando canvas-updated a otros clientes en sala ${roomId}`);
     client.to(roomId).emit('canvas-updated', data);
   }
 }
