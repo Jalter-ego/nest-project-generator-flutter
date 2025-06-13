@@ -50,7 +50,7 @@ export class AppController {
             const newFolder = zipFolder.folder(file);
             if (newFolder) addFilesToZip(fullPath, newFolder);
           } else {
-            const fileContent = fs.readFileSync(fullPath, 'utf8');
+            const fileContent = fs.readFileSync(fullPath);
             zipFolder.file(file, fileContent);
           }
         });
