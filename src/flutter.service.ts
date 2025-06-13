@@ -258,7 +258,7 @@ StatefulBuilder(
         return positionWrapper(IconNavegable('iconSearch', onPressed));
       case 'iconLock':
         return positionWrapper(
-          `Icon(Icons.lock, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.lock, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconMenuDeep':
         return positionWrapper(IconNavegable('iconMenuDeep', onPressed));
@@ -266,7 +266,7 @@ StatefulBuilder(
         return positionWrapper(IconNavegable('iconMenuDots', onPressed));
       case 'iconHeart':
         return positionWrapper(
-          `Icon(Icons.favorite_outline, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.favorite_outline, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconMessage':
         return positionWrapper(IconNavegable('iconMessage', onPressed));
@@ -278,39 +278,39 @@ StatefulBuilder(
         return positionWrapper(IconNavegable('iconLogout', onPressed));
       case 'iconAdd':
         return positionWrapper(
-          `Icon(Icons.add, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.add, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconTag':
         return positionWrapper(
-          `Icon(Icons.label, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.label, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconShare':
         return positionWrapper(
-          `Icon(Icons.share, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.share, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconDotsHorizontal':
         return positionWrapper(
-          `Icon(Icons.more_horiz, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.more_horiz, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconPlane':
         return positionWrapper(
-          `Icon(Icons.send, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.send, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconImage':
         return positionWrapper(
-          `Icon(Icons.image, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.image, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconText':
         return positionWrapper(
-          `Icon(Icons.text_fields, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.text_fields, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconEmoji':
         return positionWrapper(
-          `Icon(Icons.emoji_emotions, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.emoji_emotions, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconMicrophone':
         return positionWrapper(
-          `Icon(Icons.mic, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.mic, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconArrowUp':
         return positionWrapper(IconNavegable('iconArrowUp', onPressed));
@@ -324,15 +324,15 @@ StatefulBuilder(
         return positionWrapper(IconNavegable('iconArrowUpDown', onPressed));
       case 'iconTrash':
         return positionWrapper(
-          `Icon(Icons.delete, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.delete, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconPencil':
         return positionWrapper(
-          `Icon(Icons.edit, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.edit, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'iconX':
         return positionWrapper(
-          `Icon(Icons.cancel, size: 32 * scaleFactor, color: Colors.grey[800])`,
+          `Icon(Icons.cancel, size: 24 * scaleFactor, color: Colors.grey[800])`,
         );
       case 'container':
         return positionWrapper(`
